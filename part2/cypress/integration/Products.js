@@ -1,16 +1,16 @@
 /// <reference types="Cypress" />
 
-import { navigateProduct, validateProductPageDisplayed, increaseQuantity, addToCart, applyCoupon, deleteProductApi, createProductApi } from "../page_objects/product_detail_page"
+import { navigateProduct, validateProductPageDisplayed, increaseQuantity, addToCart, deleteProductApi, createProductApi } from "../page_objects/product_detail_page"
 import { goToCartIcon } from "../page_objects/navbar_page"
-import { validateProductListed, validatePrice, validateQuantityCart, fillCouponCode, createCouponApi, deleteCouponApi, validateDiscount } from "../page_objects/cart_page"
+import { validateProductListed, validatePrice, validateQuantityCart, fillCouponCode, createCouponApi, deleteCouponApi, validateDiscount, applyCoupon } from "../page_objects/cart_page"
 
 describe('Products', () => {
     beforeEach(() => {
-        createProductApi()
+        createProductApi("Jack", "35.00", "This is the best T-shirt ever")
     })
 
     afterEach(() => {
-        deleteProductApi()
+        deleteProductApi("Jack")
     })
 
     it('Validate that a product can be added to the shopping cart', () => {
@@ -27,18 +27,18 @@ describe('Products', () => {
 
 describe('Discount', () => {
     beforeEach(() => {
-        createCouponApi()
-        createProductApi()
+        createProductApi("Jack", "35.00", "This is the best T-shirt ever")
+        createCouponApi("100off_Jack", "100", "30")
     })
 
     afterEach(() => {
-        deleteProductApi()
-        deleteCouponApi()
+        deleteProductApi("Jack")
+        deleteCouponApi("100off_Jack")
     })
     it('Validate coupon', () => {
         navigateProduct("jack")
         validateProductPageDisplayed("Jack")
-        increaseQuantity(2)
+        increaseQuantity(31)
         addToCart()
         goToCartIcon()
         validateProductListed("Jack")

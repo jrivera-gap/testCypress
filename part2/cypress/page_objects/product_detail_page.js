@@ -1,15 +1,18 @@
 /// <reference types="Cypress" />
 
+// This function navigates to the poducts page
 export function navigateProduct(product_id){
     cy.visit(`http://34.205.174.166/product/${product_id}/`)
 }
 
+// This function validates the product page is correctly displayed 
 export function validateProductPageDisplayed(product_name){
     cy.get('.woocommerce-breadcrumb').should('contain.text', product_name)
     cy.get('.product_title').should('have.text', product_name)
-    cy.get('.summary > .price > .woocommerce-Price-amount').should('be.visible')
+    cy.get('.summary > .price').should('be.visible')
 }
 
+// This function increments the quantity of items
 export function increaseQuantity(num){
     cy.get('.quantity input').clear()
     cy.get('.quantity input').type(num)
@@ -19,6 +22,7 @@ export function increaseQuantity(num){
     })
 }
 
+// This function clicks tha add to cart button and verifies the correct amount of items have been added to the cart
 export function addToCart(){
     cy.get('#site-header-cart .count').then(($count) => {
         let itemsCount = Number($count.text().split(" ")[0])
@@ -33,15 +37,15 @@ export function addToCart(){
     })
 }
 
-export function validateItemsCart(count_items){
-    cy.get('.cart-contents > .count').should('have.text', count_items.toString() + " items")
-}
+// ===========   API ============ //
 
-export function applyCoupon(){
-    cy.get('.coupon > .button').click()
-}
+// Creates a new product by API
+// parameters:
+// name: name of the product
+// price: price of the product i.e "35.00"
+// desc: description of the product
 
-export function createProductApi(){
+export function createProductApi(name, price, desc){
     cy.request({
         method: 'POST',
         url: 'http://34.205.174.166/wp-json/wc/v3/products', // baseUrl is prepended to url
@@ -51,15 +55,18 @@ export function createProductApi(){
           password: 'Duux PIEd eUlK Lmin cR3c 5i1h'
         },
         qs: {
-            name: 'Jack',
+            name: name,
             type: 'simple',
-            regular_price: '35',
-            description: 'this%20is%20the%20bes%20tshirt%20ever' 
+            regular_price: price,
+            description: desc 
         }
       })
 }
 
-export function deleteProductApi(){
+// Deletes a product by API
+// parameters:
+// name: name of the product
+export function deleteProductApi(name){
     cy.request({
         method: 'GET',
         url: 'http://34.205.174.166/wp-json/wc/v3/products/', // baseUrl is prepended to url
@@ -69,7 +76,7 @@ export function deleteProductApi(){
           password: 'Duux PIEd eUlK Lmin cR3c 5i1h'
         },
         qs: {
-            search: 'Jack'
+            search: name
         }
       }).then(($lista) =>{
         let id_producto = $lista.body[0].id
